@@ -15,6 +15,9 @@ namespace ConsoleApp
       myAVLTREE.Add(7, 7);
       myAVLTREE.Add(7, 7);
       myAVLTREE.Add(7, 7);
+      myAVLTREE.Add(4, 7);
+      myAVLTREE.Add(2, 7);
+      myAVLTREE.Add(3, 7);
     }
   }
 }

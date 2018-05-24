@@ -8,6 +8,8 @@ namespace AVLTree
     {
       public Node Left;
       public Node Right;
+      public Node Parent;
+      public int NodesBelow;
       public Key Key;
       public Value Value;
     }
@@ -22,23 +24,34 @@ namespace AVLTree
     /// <param name="value"></param>
     public void Add(Key key, Value value)
     {
-      AddNode(ref _root, new Node { Value = value, Key = key });
+      AddNode(ref _root, null, new Node { Value = value, Key = key });
     }
 
-    private static void AddNode(ref Node current, Node node)
+    private static void AddNode(ref Node current, Node parent, Node nodeToAdd)
     {
       if (current == null)
       {
-        current = node;
+        nodeToAdd.Parent = parent;
+        current = nodeToAdd;
+        NodesBelow(ref current, 1);
       }
-      else if (node.Key.CompareTo(current.Key) < 0)
+      else if (nodeToAdd.Key.CompareTo(current.Key) < 0)
       {
-        AddNode(ref current.Left, node);
+        AddNode(ref current.Left,current, nodeToAdd);
       }
       else // >= 0
       {
-        AddNode(ref current.Right, node);
+        AddNode(ref current.Right,current, nodeToAdd);
       }
+    }
+
+    private static void NodesBelow(ref Node node, int b)
+    {
+      node.NodesBelow = b;
+      if (node.Parent != null)
+      {        
+        NodesBelow(ref node.Parent, ++b);
+      }    
     }
 
     #endregion
