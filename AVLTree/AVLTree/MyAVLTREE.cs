@@ -25,25 +25,43 @@ namespace AVLTree
     /// <param name="value"></param>
     public void Add(Key key, Value value)
     {
-      AddNode(ref _root, null, new Node { Value = value, Key = key });
-    }
-
-    private static void AddNode(ref Node current, Node parent, Node nodeToAdd)
-    {
-      if (current == null)
+      if(_root == null)
       {
-        nodeToAdd.Parent = parent;
-        current = nodeToAdd;
-        Height(ref current, 1);
-        BalanceFactor(ref current);
+        _root = new Node { Key = key, Value = value };
       }
-      else if (nodeToAdd.Key.CompareTo(current.Key) < 0)
+      else
       {
-        AddNode(ref current.Left,current, nodeToAdd);
-      }
-      else // >= 0
-      {
-        AddNode(ref current.Right,current, nodeToAdd);
+        Node node = _root;
+        while(node != null)
+        {
+          int compare = key.CompareTo(node.Key);
+          if(compare < 0)
+          {
+            Node left = node.Left;
+            if(left == null)
+            {
+              node.Left = new Node { Key = key, Value = value, Parent = node };
+              return;
+            }
+            else
+            {
+              node = left;
+            }
+          }
+          else if(compare >= 0)
+          {
+            Node right = node.Right;
+            if(right == null)
+            {
+              node.Right = new Node { Key = key, Value = value, Parent = node };
+              return;
+            }
+            else
+            {
+              node = right;
+            }
+          }
+        }
       }
     }
 
@@ -79,6 +97,17 @@ namespace AVLTree
         return 0;
       else
         return node.Left.Height;
+    }
+
+    private static void CheckBalance(ref Node node)
+    {
+      if(node.balanceFactor > 1 || node.balanceFactor < -1)
+      {
+        if(GetLeftHeight(node) < GetRightHeight(node))
+        {
+
+        }
+      }
     }
 
     #endregion
