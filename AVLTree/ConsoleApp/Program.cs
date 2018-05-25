@@ -11,13 +11,13 @@ namespace ConsoleApp
   {
     static void Main(string[] args)
     {
-      MyAVLTREE<int, int> myAVLTREE = new MyAVLTREE<int, int>();
-      myAVLTREE.Add(7, 7);
-      myAVLTREE.Add(7, 7);
-      myAVLTREE.Add(7, 7);
-      myAVLTREE.Add(4, 7);
-      myAVLTREE.Add(2, 7);
-      myAVLTREE.Add(3, 7);
+      MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
+      myAVLTREE.Add(7, "");
+      myAVLTREE.Add(7, "");
+      myAVLTREE.Add(7, "");
+      myAVLTREE.Add(4, "");
+      myAVLTREE.Add(2, "");
+      myAVLTREE.Add(3, "");
     }
   }
 }

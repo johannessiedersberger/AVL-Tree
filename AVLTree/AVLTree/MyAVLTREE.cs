@@ -6,12 +6,13 @@ namespace AVLTree
   {
     private class Node
     {
+      public Key Key;
+      public Value Value;
       public Node Left;
       public Node Right;
       public Node Parent;
-      public int NodesBelow;
-      public Key Key;
-      public Value Value;
+      public int Height;
+      public int balanceFactor;    
     }
 
     private Node _root;
@@ -33,7 +34,8 @@ namespace AVLTree
       {
         nodeToAdd.Parent = parent;
         current = nodeToAdd;
-        NodesBelow(ref current, 1);
+        Height(ref current, 1);
+        BalanceFactor(ref current);
       }
       else if (nodeToAdd.Key.CompareTo(current.Key) < 0)
       {
@@ -45,13 +47,38 @@ namespace AVLTree
       }
     }
 
-    private static void NodesBelow(ref Node node, int b)
+    private static void Height(ref Node node, int b)
     {
-      node.NodesBelow = b;
+      node.Height = b;
       if (node.Parent != null)
       {        
-        NodesBelow(ref node.Parent, ++b);
+        Height(ref node.Parent, ++b);
       }    
+    }
+
+    private static void BalanceFactor(ref Node node)
+    {
+      node.balanceFactor = GetRightHeight(node) - GetLeftHeight(node);
+      if (node.Parent != null)
+      {
+        BalanceFactor(ref node.Parent);
+      }
+    }
+
+    private static int GetRightHeight(Node node)
+    {
+      if (node.Right == null)
+        return 0;
+      else
+        return node.Right.Height;
+    }
+
+    private static int GetLeftHeight(Node node)
+    {
+      if (node.Left == null)
+        return 0;
+      else
+        return node.Left.Height;
     }
 
     #endregion
