@@ -11,8 +11,7 @@ namespace AVLTree
       public Node Left;
       public Node Right;
       public Node Parent;
-      public int Height;
-      public int balanceFactor;    
+      public int Balance;    
     }
 
     private Node _root;
@@ -65,50 +64,51 @@ namespace AVLTree
       }
     }
 
-    private static void Height(ref Node node, int b)
+    private void InsertBalance(Node node, int balance)
     {
-      node.Height = b;
-      if (node.Parent != null)
-      {        
-        Height(ref node.Parent, ++b);
-      }    
-    }
-
-    private static void BalanceFactor(ref Node node)
-    {
-      node.balanceFactor = GetRightHeight(node) - GetLeftHeight(node);
-      if (node.Parent != null)
+      while(node != null)
       {
-        BalanceFactor(ref node.Parent);
-      }
-    }
-
-    private static int GetRightHeight(Node node)
-    {
-      if (node.Right == null)
-        return 0;
-      else
-        return node.Right.Height;
-    }
-
-    private static int GetLeftHeight(Node node)
-    {
-      if (node.Left == null)
-        return 0;
-      else
-        return node.Left.Height;
-    }
-
-    private static void CheckBalance(ref Node node)
-    {
-      if(node.balanceFactor > 1 || node.balanceFactor < -1)
-      {
-        if(GetLeftHeight(node) < GetRightHeight(node))
+        balance = (node.Balance += balance);
+        if(balance == 0)
         {
-
+          return;
         }
+        else if(balance == 2)
+        {
+          if(node.Left.Balance == 1)
+          {
+            //Rotate Right
+          }
+          else
+          {
+            //RotateLeftRight
+          }
+          return;
+        }
+        else if(balance == -2)
+        {
+          if(node.Right.Balance == -1)
+          {
+            //Rotate Left
+          }
+          else
+          {
+            //Rotate Right Left
+          }
+          return;
+        }
+        Node parent = node.Parent;
+
+        if(parent != null)
+        {
+          balance = parent.Left == node ? 1 : -1;
+        }
+
+        node = parent;
       }
     }
+
+  
 
     #endregion
 
