@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" name="Test.exe" fullname="C:/Users/jsiedersberger/Documents/GitHub/AVL-Tree/AVLTree/Test/bin/Debug/Test.exe" testcasecount="2" result="Passed" start-time="2018-05-28 13:15:08Z" end-time="2018-05-28 13:15:08Z" duration="0.086115" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="6" random-seed="3659983">
+  <command-line><![CDATA["C:\Users\jsiedersberger\Documents\GitHub\AVL-Tree\AVLTree\Test\bin\Debug\Test.exe"]]></command-line>
+  <filter />
+  <test-suite type="Assembly" id="1003" name="Test.exe" fullname="C:/Users/jsiedersberger/Documents/GitHub/AVL-Tree/AVLTree/Test/bin/Debug/Test.exe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2018-05-28 13:15:08Z" end-time="2018-05-28 13:15:08Z" duration="0.086115" total="2" passed="2" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="6">
+    <environment framework-version="3.7.1.0" clr-version="4.0.30319.42000" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="C:\Users\jsiedersberger\Documents\GitHub\AVL-Tree\AVLTree\Test" machine-name="W-SIEDERSB-10" user="jsiedersberger" user-domain="DE" culture="de-DE" uiculture="de-DE" os-architecture="x86" />
+    <settings>
+      <setting name="WorkDirectory" value="C:\Users\jsiedersberger\Documents\GitHub\AVL-Tree\AVLTree\Test" />
+      <setting name="NumberOfTestWorkers" value="2" />
+    </settings>
+    <properties>
+      <property name="_PID" value="12940" />
+      <property name="_APPDOMAIN" value="Test.exe" />
+    </properties>
+    <test-suite type="TestSuite" id="1004" name="Test" fullname="Test" runstate="Runnable" testcasecount="2" result="Passed" start-time="2018-05-28 13:15:08Z" end-time="2018-05-28 13:15:08Z" duration="0.062579" total="2" passed="2" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="6">
+      <test-suite type="TestFixture" id="1000" name="Test" fullname="Test.Test" classname="Test.Test" runstate="Runnable" testcasecount="2" result="Passed" start-time="2018-05-28 13:15:08Z" end-time="2018-05-28 13:15:08Z" duration="0.057244" total="2" passed="2" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="6">
+        <test-case id="1001" name="TestRotateLeft" fullname="Test.Test.TestRotateLeft" methodname="TestRotateLeft" classname="Test.Test" runstate="Runnable" seed="1722082390" result="Passed" start-time="2018-05-28 13:15:08Z" end-time="2018-05-28 13:15:08Z" duration="0.031028" asserts="3" />
+        <test-case id="1002" name="TestRotateRight" fullname="Test.Test.TestRotateRight" methodname="TestRotateRight" classname="Test.Test" runstate="Runnable" seed="395694641" result="Passed" start-time="2018-05-28 13:15:08Z" end-time="2018-05-28 13:15:08Z" duration="0.000815" asserts="3" />
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
