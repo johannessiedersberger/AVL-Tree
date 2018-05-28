@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVLTree", "AVLTree\AVLTree.csproj", "{4CD9B460-3A84-4A91-AFF5-98F8FE290C89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AVLTree", "AVLTree\AVLTree.csproj", "{4CD9B460-3A84-4A91-AFF5-98F8FE290C89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{96A7A021-F23D-42FE-AB4E-5DFD33709A8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{4D7742CA-82B7-4DD5-8B4F-C0C9A8E13CDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{96A7A021-F23D-42FE-AB4E-5DFD33709A8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96A7A021-F23D-42FE-AB4E-5DFD33709A8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96A7A021-F23D-42FE-AB4E-5DFD33709A8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D7742CA-82B7-4DD5-8B4F-C0C9A8E13CDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D7742CA-82B7-4DD5-8B4F-C0C9A8E13CDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D7742CA-82B7-4DD5-8B4F-C0C9A8E13CDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D7742CA-82B7-4DD5-8B4F-C0C9A8E13CDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,7 +4,7 @@ namespace AVLTree
 {
   public class MyAVLTREE<Key, Value> where Key : IComparable<Key>
   {
-    private class Node
+    public class Node
     {
       public Key Key;
       public Value Value;
@@ -15,6 +15,11 @@ namespace AVLTree
     }
 
     private Node _root;
+    public Node Root
+    {
+      get { return _root; }
+    }
+   
 
     #region Add
     /// <summary>
@@ -40,6 +45,7 @@ namespace AVLTree
             if(left == null)
             {
               node.Left = new Node { Key = key, Value = value, Parent = node };
+              InsertBalance(node, 1);
               return;
             }
             else
@@ -53,6 +59,7 @@ namespace AVLTree
             if(right == null)
             {
               node.Right = new Node { Key = key, Value = value, Parent = node };
+              InsertBalance(node, -1);
               return;
             }
             else
@@ -89,7 +96,7 @@ namespace AVLTree
         {
           if(node.Right.Balance == -1)
           {
-            //Rotate Left
+            RotateLeft(node);
           }
           else
           {
@@ -106,6 +113,39 @@ namespace AVLTree
 
         node = parent;
       }
+    }
+
+    private Node RotateLeft(Node node)
+    {
+      Node right = node.Right;
+      Node rightLeft = right.Left;
+      Node parent = node.Parent;
+
+      right.Parent = parent;
+      right.Left = node;
+      node.Right = rightLeft;
+      node.Parent = right;
+
+      if(rightLeft != null)
+      {
+        rightLeft.Parent = node;
+      }
+
+      if(node == _root)
+      {
+        _root = right;
+      }
+      else if(parent.Right == node)
+      {
+        parent.Right = right;
+      }
+      else
+      {
+        parent.Left = right;
+      }
+      right.Balance++;
+      node.Balance = -right.Balance;
+      return right;
     }
 
   
