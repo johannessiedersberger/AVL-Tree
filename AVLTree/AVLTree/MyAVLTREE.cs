@@ -86,9 +86,9 @@ namespace AVLTree
           {
             RotateRight(node);
           }
-          else
+          else // -1
           {
-            //RotateLeftRight
+            RotateLeftRight(node);
           }
           return;
         }
@@ -183,9 +183,65 @@ namespace AVLTree
       return left;
     }
 
+    private Node RotateLeftRight(Node node)
+    {
+      Node left = node.Left;
+      Node leftRight = node.Left.Right;
+      Node parent = node.Parent;
+      Node leftRightRight = leftRight.Right;
+      Node leftRightLeft = leftRight.Left;
 
+      leftRight.Parent = parent;
+      node.Left = leftRightRight;
+      left.Right = leftRightLeft;
+      leftRight.Left = left;
+      leftRight.Right = node;
+      left.Parent = leftRight;
+      node.Parent = leftRight;
 
-  
+      if(leftRightRight != null)
+      {
+        leftRightRight.Parent = node;
+      }
+
+      if(leftRightLeft != null)
+      {
+        leftRightLeft.Parent = left;
+      }
+
+      if(node == _root)
+      {
+        _root = leftRight;
+      }
+      else if(parent.Left == node)
+      {
+        parent.Left = leftRight;
+      }
+      else
+      {
+        parent.Right = leftRight;
+      }
+
+      if(leftRight.Balance == -1)
+      {
+        node.Balance = 0;
+        left.Balance = 1;
+      }
+      else if(leftRight.Balance == 0)
+      {
+        node.Balance = 0;
+        left.Balance = 0;
+      }
+      else
+      {
+        node.Balance = -1;
+        left.Balance = 0;
+      }
+
+      leftRight.Balance = 0;
+      return leftRight;
+
+    }
 
     #endregion
 
