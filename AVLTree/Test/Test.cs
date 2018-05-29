@@ -53,7 +53,27 @@ namespace Test
       Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(5));
 
       Assert.That(myAVLTREE.Root.Balance, Is.EqualTo(0));
+      Assert.That(myAVLTREE.Root.Left.Balance, Is.EqualTo(0));
+      Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
 
+    }
+
+    [Test]
+    public void TestRotateRightLeft()
+    {
+      MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
+
+      myAVLTREE.Add(3, "");
+      myAVLTREE.Add(5, "");
+      myAVLTREE.Add(4, "");
+
+      Assert.That(myAVLTREE.Root.Key, Is.EqualTo(4));
+      Assert.That(myAVLTREE.Root.Left.Key, Is.EqualTo(3));
+      Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(5));
+
+      Assert.That(myAVLTREE.Root.Balance, Is.EqualTo(0));
+      Assert.That(myAVLTREE.Root.Left.Balance, Is.EqualTo(0));
+      Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
     }
   }
 }
