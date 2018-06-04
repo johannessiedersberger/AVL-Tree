@@ -75,5 +75,26 @@ namespace Test
       Assert.That(myAVLTREE.Root.Left.Balance, Is.EqualTo(0));
       Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
     }
+
+    [Test]
+    public void TestDelete()
+    {
+      MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
+
+      myAVLTREE.Add(10, "");
+      myAVLTREE.Add(8, "");
+      myAVLTREE.Add(13, "");
+      myAVLTREE.Add(7, "");
+      myAVLTREE.Add(9, "");
+      myAVLTREE.Add(11, "");
+      myAVLTREE.Add(14, "");
+
+      myAVLTREE.Remove(10);
+
+      Assert.That(myAVLTREE.Root.Balance, Is.EqualTo(0));
+      Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(13));
+      Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(-1));
+      Assert.That(myAVLTREE.Root.Right.Right, Is.EqualTo(14));
+    }
   }
 }
