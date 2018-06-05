@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 namespace AVLTree
 {
   public class MyAVLTREE<Key, Value> where Key : IComparable<Key>
@@ -417,7 +417,7 @@ namespace AVLTree
       RemoveIter(ref _root, key);
     }
 
-    private static void RemoveIter(ref Node node, Key key)
+    private void RemoveIter(ref Node node, Key key)
     {
       if (node == null)
         return;
@@ -437,35 +437,59 @@ namespace AVLTree
       }
     }
 
-    private static void RemoveNode(ref Node node)
+    private void RemoveNode(ref Node node)
     {
-      if (node.Left == null && node.Right != null)
+      Node right = node.Right;
+      Node left = node.Left;
+      Node parent = node.Parent;
+
+      if(_root.Left == null && _root.Right == null) // Only one Root node
       {
-        node = node.Right;
-        //TODO: Delete Balance
+        _root = null;
       }
-      else if (node.Right == null && node.Left != null)
+      else if(parent.Left == node && left == null && right == null) // left and right == null / parent -> left
       {
-        node = node.Left;
+        parent.Left = null;
+        DeleteBalance(parent, -1);
       }
-      else if (node.Left == null && node.Right == null)
+      else if(parent.Right == node && left == null && right == null) // left and right == null / parent -> right
       {
-        node = null;
+        parent.Right = null;
+        DeleteBalance(parent, 1);
       }
-      else // left & Right are not null
+      else if(left == null && right != null)
       {
-        Node leftMost = GetLeftMostNode(node.Right);
-        leftMost.Left = node.Left;
-        node = node.Right;
+        Replace(node, right);
+        DeleteBalance(node, 0);
       }
+      else if (left != null && right == null)
+      {
+        Replace(node, left);
+        DeleteBalance(node, 0);
+      }
+
     }
 
-    private static Node GetLeftMostNode(Node node)
+    private void Replace(Node target, Node source)
     {
-      if (node.Left == null)
-        return node;
-      else
-        return GetLeftMostNode(node.Left);
+      Node left = source.Left;
+      Node right = source.Right;
+
+      target.Balance = source.Balance;
+      target.Key = source.Key;
+      target.Value = source.Value;
+      target.Left = left;
+      target.Right = right;
+
+      if (left != null)
+      {
+        left.Parent = target;
+      }
+
+      if (right != null)
+      {
+        right.Parent = target;
+      }
     }
 
     private void DeleteBalance(Node node, int balance)
@@ -518,7 +542,6 @@ namespace AVLTree
 
       if (parent != null)
         DeleteBalance(parent, balance);
-
     }
 
 
@@ -547,7 +570,6 @@ namespace AVLTree
       arr[index++] = node.Value;
       ToArray(node.Right, arr, ref index);
     }
-
     #endregion
   }
 }
