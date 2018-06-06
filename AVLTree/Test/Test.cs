@@ -55,7 +55,7 @@ namespace Test
       Assert.That(myAVLTREE.Root.Balance, Is.EqualTo(0));
       Assert.That(myAVLTREE.Root.Left.Balance, Is.EqualTo(0));
       Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
-
+      Assert.That(myAVLTREE.Height, Is.EqualTo(2));
     }
 
     [Test]
@@ -74,6 +74,7 @@ namespace Test
       Assert.That(myAVLTREE.Root.Balance, Is.EqualTo(0));
       Assert.That(myAVLTREE.Root.Left.Balance, Is.EqualTo(0));
       Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
+      Assert.That(myAVLTREE.Height, Is.EqualTo(2));
     }
 
     [Test]
@@ -94,12 +95,33 @@ namespace Test
       Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
       Assert.That(myAVLTREE.Root.Left.Key, Is.EqualTo(10));
       Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(14));
+      Assert.That(myAVLTREE.Height, Is.EqualTo(3));
     }
 
-    
+    [Test]
+    public void RandomAddTest()
+    {
+      MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
+
+      List<int> addedValues = new List<int>();
+      Random random = new Random(System.DateTime.Now.Millisecond.GetHashCode());
+      for (int i = 0; i < 1000; i++)
+      {
+        int randomNumber = random.Next(10000);
+        myAVLTREE.Add(randomNumber, "");
+        addedValues.Add(randomNumber);
+        Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
+      }
+      for (int i = 0; i < 1000; i++)
+      {
+        int rnd = random.Next(addedValues.Count());
+        int value = addedValues[rnd];
+        myAVLTREE.Remove(value);
+        addedValues.Remove(value);
+        Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
+      }
 
 
-
-
+    }
   }
 }

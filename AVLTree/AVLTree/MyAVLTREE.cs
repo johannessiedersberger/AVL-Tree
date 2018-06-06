@@ -635,5 +635,18 @@ namespace AVLTree
       ToArray(node.Right, arr, ref index);
     }
     #endregion
+
+    public int Height()
+    {
+      return Getheight(_root);
+    }
+
+    private int Getheight(Node node)
+    {
+      if (node == null)
+        return 0;
+      else
+        return Math.Max(Getheight(node.Left), Getheight(node.Right)) + 1;
+    }
   }
 }
