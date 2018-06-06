@@ -96,37 +96,10 @@ namespace Test
       Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(14));
     }
 
-    [Test]
-    public void TestDelete2()
-    {
-      MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
+    
 
-      myAVLTREE.Add(10, "");
-      myAVLTREE.Add(8, "");
-      myAVLTREE.Add(7, "");
-      myAVLTREE.Add(9, "");
-      myAVLTREE.Add(13, "");
-      myAVLTREE.Add(11, "");
-      myAVLTREE.Add(14, "");
 
-      myAVLTREE.Remove(10);
-    }
 
-    public void PrintArray()
-    {
-      MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
 
-      myAVLTREE.Add(10, "");
-      myAVLTREE.Add(8, "");
-      myAVLTREE.Add(7, "");
-      myAVLTREE.Add(9, "");
-      myAVLTREE.Add(13, "");
-      myAVLTREE.Add(11, "");
-      myAVLTREE.Add(14, "");
-
-      MyAVLTREE<int, string> tree = tree.ToArray();
-
-      Console.WriteLine();
-    }
   }
 }

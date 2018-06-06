@@ -447,17 +447,17 @@ namespace AVLTree
       {
         _root = null;
       }
-      else if(parent.Left == node && left == null && right == null) // left and right == null / parent -> left
+      else if(parent != null && parent.Left == node && left == null && right == null) // left and right == null / parent -> left
       {
         parent.Left = null;
         DeleteBalance(parent, -1);
       }
-      else if(parent.Right == node && left == null && right == null) // left and right == null / parent -> right
+      else if(parent != null && parent.Right == node && left == null && right == null) // left and right == null / parent -> right
       {
         parent.Right = null;
         DeleteBalance(parent, 1);
       }
-      else if(left == null && right != null)
+      else if(left == null && right != null) 
       {
         Replace(node, right);
         DeleteBalance(node, 0);
@@ -467,7 +467,71 @@ namespace AVLTree
         Replace(node, left);
         DeleteBalance(node, 0);
       }
+      else if(right != null && left != null && right.Left == null)
+      {
+        right.Parent = parent;
+        right.Left = left;
+        right.Balance = node.Balance;
 
+        
+        left.Parent = right;
+        if (node == _root)
+        {
+          _root = right;
+        }
+        else
+        {
+          if (parent.Left == node)
+            parent.Left = right;
+          else
+            parent.Right = right;
+        }
+        
+        DeleteBalance(right, 1);
+      }
+      else if (right != null && left != null && right.Left != null)
+      {
+        Node successor = GetLeftMostNode(right);
+        Node successorParent = successor.Parent;
+        Node successorRight = successor.Right;
+
+        // node right of successor
+        successorParent.Left = successorRight;    
+        if (successorRight != null)
+          successorRight.Parent = successorParent;
+
+        //replace node with successor
+        successor.Parent = parent;
+        successor.Left = left;
+        successor.Balance = node.Balance;
+        successor.Right = right;
+        right.Parent = successor;
+
+        
+        if (left != null)
+          left.Parent = successor;
+        
+        if (node == _root)
+        {
+          _root = successor;
+        }
+        else
+        {
+          if (parent.Left == node)   
+            parent.Left = successor;     
+          else          
+            parent.Right = successor;
+        }
+        DeleteBalance(successorParent, -1);
+      }
+    }
+
+    private static Node GetLeftMostNode(Node node)
+    {
+      if (node.Left == null)
+        return node;
+      else
+        return GetLeftMostNode(node.Left);
     }
 
     private void Replace(Node target, Node source)
