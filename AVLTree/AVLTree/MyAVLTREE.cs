@@ -1,10 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
+
 namespace AVLTree
 {
   public class MyAVLTREE<Key, Value> where Key : IComparable<Key>
   {
-    public class Node
+    internal bool ClassInvariantFullfilled()
+    {
+      var height = Height();
+      var maxHeight = (int)Math.Floor(1.44 * Math.Log(Count() + 2, 2) - .328);
+      return height <= maxHeight;
+    }
+
+    internal class Node
     {
       public Key Key;
       public Value Value;
@@ -13,13 +21,8 @@ namespace AVLTree
       public Node Parent;
     }
 
-    private Node _root;
-    public Node Root
-    {
-      get { return _root; }
-    }
-
-
+    internal Node Root { get; private set; }
+    
     #region Add
     /// <summary>
     /// Add a new value to the tree 
@@ -28,80 +31,73 @@ namespace AVLTree
     /// <param name="value"></param>
     public void Add(Key key, Value value)
     {
-      AddNode(key, value, _root);
+      if (key == null)
+        throw new ArgumentNullException(nameof(key));
+
+      if (Root == null)
+      {
+        Root = new Node { Key = key, Value = value };
+      }
+      else
+      {
+        AddNode(key, value, Root);
+      }
+
+      Debug.Assert(ClassInvariantFullfilled());
     }
 
     private void AddNode(Key key, Value value, Node node)
     {
-      if (_root == null)
+      Debug.Assert(key != null);
+      Debug.Assert(node != null);
+
+      int compare = key.CompareTo(node.Key);
+      if (compare < 0)
       {
-        _root = new Node { Key = key, Value = value };
-      }
-      else
-      {
-        int compare = key.CompareTo(node.Key);
-        if (compare < 0)
+        if (node.Left == null)
         {
-          Node left = node.Left;
-          if (left == null)
-          {
-            node.Left = new Node { Key = key, Value = value, Parent = node };
-            InsertBalance(node);
-            return;
-          }
-          else
-          {
-            AddNode(key, value, node.Left);
-          }
+          node.Left = new Node { Key = key, Value = value, Parent = node };
         }
-        else if (compare >= 0)
+        else
         {
-          Node right = node.Right;
-          if (right == null)
-          {
-            node.Right = new Node { Key = key, Value = value, Parent = node };
-            InsertBalance(node);
-            return;
-          }
-          else
-          {
-            AddNode(key, value, node.Right);
-          }
+          AddNode(key, value, node.Left);
         }
       }
+      else 
+      {
+        if (node.Right == null)
+        {
+          node.Right = new Node { Key = key, Value = value, Parent = node };
+        }
+        else
+        {
+          AddNode(key, value, node.Right);
+        }
+      }
+
+      BalanceAfterInsert(node);
     }
 
-    private void InsertBalance(Node node)
+    private void BalanceAfterInsert(Node node)
     {
-      int balance = GetBalance(node);
+      switch(GetBalance(node))
+      {
+        default:
+          break;
 
-      if (balance == 0)
-      {
-        return;
-      }
-      else if (balance == 2)
-      {
-        if (GetBalance(node.Left) == 1)
-          RotateRight(node);
-        else //node.Left.Balance == -1
-          RotateLeftRight(node);
+        case 2:
+          if (GetBalance(node.Left) == 1)
+            RotateRight(node);
+          else //node.Left.Balance == -1
+            RotateLeftRight(node);
+          break;
 
-        return;
-      }
-      else if (balance == -2)
-      {
-        if (GetBalance(node.Right) == -1)
-          RotateLeft(node);
-        else //node.Left.Balance == 1
-          RotateRightLeft(node);
-        return;
-      }
-
-      Node parent = node.Parent;
-      if (parent != null)
-      {
-        balance = parent.Left == node ? 1 : -1;
-        InsertBalance(parent);
+        case -2:
+          if (GetBalance(node.Right) == -1)
+            RotateLeft(node);
+          else //node.Left.Balance == 1
+            RotateRightLeft(node);
+          break;
       }
     }
 
@@ -124,8 +120,8 @@ namespace AVLTree
       if (rightLeft != null)
         rightLeft.Parent = node;
 
-      if (node == _root)
-        _root = right;
+      if (node == Root)
+        Root = right;
       else if (parent.Right == node)
         parent.Right = right;
       else
@@ -148,8 +144,8 @@ namespace AVLTree
       if (leftRight != null)
         leftRight.Parent = node;
 
-      if (node == _root)
-        _root = left;
+      if (node == Root)
+        Root = left;
       else if (parent.Left == node)
         parent.Left = left;
       else
@@ -180,8 +176,8 @@ namespace AVLTree
       if (leftRightLeft != null)
         leftRightLeft.Parent = left;
 
-      if (node == _root)
-        _root = leftRight;
+      if (node == Root)
+        Root = leftRight;
       else if (parent.Left == node)
         parent.Left = leftRight;
       else
@@ -213,8 +209,8 @@ namespace AVLTree
       if (rightLeftRight != null)
         rightLeftRight.Parent = right;
 
-      if (node == _root)
-        _root = rightLeft;
+      if (node == Root)
+        Root = rightLeft;
       else if (parent.Right == node)
         parent.Right = rightLeft;
       else
@@ -233,7 +229,7 @@ namespace AVLTree
     /// <returns>returns true if the given value is included in the tree</returns>
     public bool Contains(Key key)
     {
-      return Contains(_root, key);
+      return Contains(Root, key);
     }
 
     private static bool Contains(Node current, Key key)
@@ -266,7 +262,7 @@ namespace AVLTree
     /// <returns>The amount of all elements in the tree</returns>
     public int Count()
     {
-      return Count(_root);
+      return Count(Root);
     }
 
     private static int Count(Node node)
@@ -290,15 +286,15 @@ namespace AVLTree
     {
       get
       {
-        Node node = GetNode(key, _root);
+        Node node = GetNode(key, Root);
         if (node == null)
-          throw new ArgumentException("The given Key is not in the tree");
+          throw new ArgumentException($"The given {nameof(key)}='{key}' is not in the tree", nameof(key));
 
         return node.Value;
       }
       set
       {
-        Node node = GetNode(key, _root);
+        Node node = GetNode(key, Root);
         if (node == null)
           throw new ArgumentException("The given Key is not in the tree");
 
@@ -336,10 +332,10 @@ namespace AVLTree
     /// <param name="key"></param>
     public void Remove(Key key)
     {
-      RemoveIter(ref _root, key);
+      RemoveIter(Root, key);
     }
 
-    private void RemoveIter(ref Node node, Key key)
+    private void RemoveIter(Node node, Key key)
     {
       if (node == null)
         return;
@@ -347,47 +343,47 @@ namespace AVLTree
       int cmpt = key.CompareTo(node.Key);
       if (cmpt < 0)
       {
-        RemoveIter(ref node.Left, key);
+        RemoveIter(node.Left, key);
       }
       else if (cmpt > 0)
       {
-        RemoveIter(ref node.Right, key);
+        RemoveIter(node.Right, key);
       }
       else // cmpt = 0
       {
-        RemoveNode(ref node);
+        RemoveNode(node);
       }
     }
 
-    private void RemoveNode(ref Node node)
+    private void RemoveNode(Node node)
     {
       Node right = node.Right;
       Node left = node.Left;
       Node parent = node.Parent;
 
-      if (_root.Left == null && _root.Right == null)
+      if (Root.Left == null && Root.Right == null)
       {
-        _root = null;
+        Root = null;
       }
       else if (parent != null && parent.Left == node && left == null && right == null)
       {
         parent.Left = null;
-        DeleteBalance(parent);
+        BalanceAfterDelete(parent);
       }
       else if (parent != null && parent.Right == node && left == null && right == null)
       {
         parent.Right = null;
-        DeleteBalance(parent);
+        BalanceAfterDelete(parent);
       }
       else if (left == null && right != null)
       {
         Replace(node, right);
-        DeleteBalance(node);
+        BalanceAfterDelete(node);
       }
       else if (left != null && right == null)
       {
         Replace(node, left);
-        DeleteBalance(node);
+        BalanceAfterDelete(node);
       }
       else if (right != null && left != null && right.Left == null)
       {
@@ -395,8 +391,8 @@ namespace AVLTree
         right.Left = left;
 
         left.Parent = right;
-        if (node == _root)
-          _root = right;
+        if (node == Root)
+          Root = right;
         else
         {
           if (parent.Left == node)
@@ -405,7 +401,7 @@ namespace AVLTree
             parent.Right = right;
         }
 
-        DeleteBalance(right);
+        BalanceAfterDelete(right);
       }
       else if (right != null && left != null && right.Left != null)
       {
@@ -425,8 +421,8 @@ namespace AVLTree
         if (left != null)
           left.Parent = successor;
 
-        if (node == _root)
-          _root = successor;
+        if (node == Root)
+          Root = successor;
         else
         {
           if (parent.Left == node)
@@ -434,7 +430,7 @@ namespace AVLTree
           else
             parent.Right = successor;
         }
-        DeleteBalance(successorParent);
+        BalanceAfterDelete(successorParent);
       }
     }
 
@@ -463,7 +459,7 @@ namespace AVLTree
         right.Parent = target;
     }
 
-    private void DeleteBalance(Node node)
+    private void BalanceAfterDelete(Node node)
     {
       int balance = GetBalance(node);
 
@@ -500,7 +496,7 @@ namespace AVLTree
         balance = parent.Left == node ? -1 : 1;
 
       if (parent != null)
-        DeleteBalance(parent);
+        BalanceAfterDelete(parent);
     }
 
 
@@ -516,7 +512,7 @@ namespace AVLTree
     {
       int index = 0;
       Value[] arr = new Value[Count()];
-      ToArray(_root, arr, ref index);
+      ToArray(Root, arr, ref index);
       return arr;
     }
 
@@ -533,7 +529,7 @@ namespace AVLTree
 
     public int Height()
     {
-      return Getheight(_root);
+      return Getheight(Root);
     }
 
     private int Getheight(Node node)

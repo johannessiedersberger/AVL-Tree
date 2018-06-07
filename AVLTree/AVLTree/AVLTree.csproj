@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
+    <Description>The balanced tree</Description>
   </PropertyGroup>
 
 </Project>

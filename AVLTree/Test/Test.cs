@@ -23,6 +23,7 @@ namespace Test
       Assert.That(myAVLTREE.Root.Key, Is.EqualTo(2));
       Assert.That(myAVLTREE.Root.Left.Key, Is.EqualTo(1));
       Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(3));
+      Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
     }
 
     [Test]
@@ -37,6 +38,7 @@ namespace Test
       Assert.That(myAVLTREE.Root.Key, Is.EqualTo(2));
       Assert.That(myAVLTREE.Root.Left.Key, Is.EqualTo(1));
       Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(3));
+      Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
     }
 
     [Test]
@@ -51,11 +53,8 @@ namespace Test
       Assert.That(myAVLTREE.Root.Key, Is.EqualTo(4));
       Assert.That(myAVLTREE.Root.Left.Key, Is.EqualTo(3));
       Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(5));
-
-      //Assert.That(myAVLTREE.Root.Balance, Is.EqualTo(0));
-      //Assert.That(myAVLTREE.Root.Left.Balance, Is.EqualTo(0));
-      //Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
       Assert.That(myAVLTREE.Height, Is.EqualTo(2));
+      Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
     }
 
     [Test]
@@ -70,11 +69,8 @@ namespace Test
       Assert.That(myAVLTREE.Root.Key, Is.EqualTo(4));
       Assert.That(myAVLTREE.Root.Left.Key, Is.EqualTo(3));
       Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(5));
+      Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
 
-      //Assert.That(myAVLTREE.Root.Balance, Is.EqualTo(0));
-      //Assert.That(myAVLTREE.Root.Left.Balance, Is.EqualTo(0));
-      //Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
-      //Assert.That(myAVLTREE.Height, Is.EqualTo(2));
     }
 
     [Test]
@@ -89,37 +85,71 @@ namespace Test
       myAVLTREE.Add(14, "");
 
       myAVLTREE.Remove(8);
-      //Assert.That(myAVLTREE.Root.Balance, Is.EqualTo(1));
-      //Assert.That(myAVLTREE.Root.Left.Balance, Is.EqualTo(-1));
-      //Assert.That(myAVLTREE.Root.Left.Right.Balance, Is.EqualTo(0));
-      //Assert.That(myAVLTREE.Root.Right.Balance, Is.EqualTo(0));
       Assert.That(myAVLTREE.Root.Left.Key, Is.EqualTo(10));
       Assert.That(myAVLTREE.Root.Right.Key, Is.EqualTo(14));
       Assert.That(myAVLTREE.Height, Is.EqualTo(3));
     }
 
     [Test]
+    public void TestNoDegeneratedAdd()
+    {
+      var tree = new MyAVLTREE<int, int>();
+      foreach (var value in Enumerable.Range(0, 100))
+      {
+        tree.Add(value, value);
+        Assert.That(tree.Height, Is.LessThan(MaxHeight(tree) + 1));
+      }
+    }
+
+    [Test, Repeat(100), Parallelizable]
     public void RandomAddRemoveTest()
     {
+      const int NUMBERS_TO_ADD = 200;
+
       MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
 
       List<int> addedValues = new List<int>();
       Random random = new Random(System.DateTime.Now.Millisecond.GetHashCode());
-      for (int i = 0; i < 1000; i++)
+      for (int i = 0; i < NUMBERS_TO_ADD; i++)
       {
-        int randomNumber = random.Next(10000);
+        int randomNumber = random.Next(100);
         myAVLTREE.Add(randomNumber, "");
         addedValues.Add(randomNumber);
-        Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
+
+        Assert.That(myAVLTREE.Height(), Is.LessThan(MaxHeight(myAVLTREE) + 1), $"Add from: {string.Join(",", addedValues)}");
       }
-      for (int i = 0; i < 1000; i++)
+
+      var allAdded = addedValues.ToArray();
+      List<int> removedIndeces = new List<int>();
+
+      while (addedValues.Count > 0)
       {
         int rnd = random.Next(addedValues.Count());
-        int value = addedValues[rnd];
-        myAVLTREE.Remove(value);
-        addedValues.Remove(value);
-        Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
+        removedIndeces.Add(rnd);
+        int toRemove = addedValues[rnd];
+        addedValues.RemoveAt(rnd);
+
+        myAVLTREE.Remove(toRemove);
+
+        Assert.That(myAVLTREE.Height(), Is.LessThan(MaxHeight(myAVLTREE) + 1), $"Removed indices from {string.Join(",", addedValues)}: {string.Join(",", removedIndeces)}");
       }
     }
+
+    private int MaxHeight<Key,Value>(MyAVLTREE<Key,Value> tree) where Key : IComparable<Key>
+    {
+      return (int)Math.Floor(1.44 * Math.Log(tree.Count() + 2, 2) - .328);
+    }
+
+    [Test]
+    public void Test1()
+    {
+      List<int> list = new List<int>() { 79,67,82,39,10,71,96 };
+      MyAVLTREE<int, int> myAVLTREE = new MyAVLTREE<int, int>();
+      foreach(int value in list)
+      {
+        myAVLTREE.Add(value, value);
+      }
+    }
+
   }
 }
