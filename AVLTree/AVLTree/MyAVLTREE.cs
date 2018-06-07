@@ -11,7 +11,6 @@ namespace AVLTree
       public Node Left;
       public Node Right;
       public Node Parent;
-      public int Balance;
     }
 
     private Node _root;
@@ -47,7 +46,7 @@ namespace AVLTree
           if (left == null)
           {
             node.Left = new Node { Key = key, Value = value, Parent = node };
-            InsertBalance(node, 1);
+            InsertBalance(node);
             return;
           }
           else
@@ -61,7 +60,7 @@ namespace AVLTree
           if (right == null)
           {
             node.Right = new Node { Key = key, Value = value, Parent = node };
-            InsertBalance(node, -1);
+            InsertBalance(node);
             return;
           }
           else
@@ -72,25 +71,26 @@ namespace AVLTree
       }
     }
 
-    private void InsertBalance(Node node, int balance)
+    private void InsertBalance(Node node)
     {
-      balance = (node.Balance += balance);
+      int balance = GetBalance(node);
+
       if (balance == 0)
       {
         return;
       }
       else if (balance == 2)
       {
-        if (node.Left.Balance == 1)
+        if (GetBalance(node.Left) == 1)
           RotateRight(node);
         else //node.Left.Balance == -1
           RotateLeftRight(node);
-        
+
         return;
       }
       else if (balance == -2)
       {
-        if (node.Right.Balance == -1)
+        if (GetBalance(node.Right) == -1)
           RotateLeft(node);
         else //node.Left.Balance == 1
           RotateRightLeft(node);
@@ -101,9 +101,13 @@ namespace AVLTree
       if (parent != null)
       {
         balance = parent.Left == node ? 1 : -1;
-        InsertBalance(parent, balance);
+        InsertBalance(parent);
       }
-        
+    }
+
+    private int GetBalance(Node node)
+    {
+      return Getheight(node.Left) - Getheight(node.Right);
     }
 
     private Node RotateLeft(Node node)
@@ -119,16 +123,14 @@ namespace AVLTree
 
       if (rightLeft != null)
         rightLeft.Parent = node;
-      
+
       if (node == _root)
-        _root = right;  
-      else if (parent.Right == node)     
-        parent.Right = right;  
-      else   
+        _root = right;
+      else if (parent.Right == node)
+        parent.Right = right;
+      else
         parent.Left = right;
-      
-      right.Balance++;
-      node.Balance = -right.Balance;
+
       return right;
     }
 
@@ -148,13 +150,10 @@ namespace AVLTree
 
       if (node == _root)
         _root = left;
-      else if (parent.Left == node)   
-        parent.Left = left;   
-      else  
+      else if (parent.Left == node)
+        parent.Left = left;
+      else
         parent.Right = left;
-      
-      left.Balance--;
-      node.Balance = -left.Balance;
 
       return left;
     }
@@ -180,33 +179,14 @@ namespace AVLTree
 
       if (leftRightLeft != null)
         leftRightLeft.Parent = left;
-      
 
-      if (node == _root)     
-        _root = leftRight;      
-      else if (parent.Left == node)     
-        parent.Left = leftRight;      
-      else      
-        parent.Right = leftRight;
-      
-
-      if (leftRight.Balance == -1)
-      {
-        node.Balance = 0;
-        left.Balance = 1;
-      }
-      else if (leftRight.Balance == 0)
-      {
-        node.Balance = 0;
-        left.Balance = 0;
-      }
+      if (node == _root)
+        _root = leftRight;
+      else if (parent.Left == node)
+        parent.Left = leftRight;
       else
-      {
-        node.Balance = -1;
-        left.Balance = 0;
-      }
+        parent.Right = leftRight;
 
-      leftRight.Balance = 0;
       return leftRight;
 
     }
@@ -228,35 +208,18 @@ namespace AVLTree
       node.Parent = rightLeft;
 
       if (rightLeftLeft != null)
-        rightLeftLeft.Parent = node;     
+        rightLeftLeft.Parent = node;
 
       if (rightLeftRight != null)
-        rightLeftRight.Parent = right;     
+        rightLeftRight.Parent = right;
 
-      if (node == _root) 
-        _root = rightLeft;     
-      else if (parent.Right == node)    
-        parent.Right = rightLeft;     
-      else     
-        parent.Left = rightLeft;
-      
-
-      if (rightLeft.Balance == 1)
-      {
-        node.Balance = 0;
-        right.Balance = -1;
-      }
-      else if (rightLeft.Balance == 0)
-      {
-        node.Balance = 0;
-        right.Balance = 0;
-      }
+      if (node == _root)
+        _root = rightLeft;
+      else if (parent.Right == node)
+        parent.Right = rightLeft;
       else
-      {
-        node.Balance = 1;
-        right.Balance = 0;
-      }
-      rightLeft.Balance = 0;
+        parent.Left = rightLeft;
+
       return rightLeft;
     }
 
@@ -402,36 +365,35 @@ namespace AVLTree
       Node left = node.Left;
       Node parent = node.Parent;
 
-      if(_root.Left == null && _root.Right == null) 
+      if (_root.Left == null && _root.Right == null)
       {
         _root = null;
       }
-      else if(parent != null && parent.Left == node && left == null && right == null) 
+      else if (parent != null && parent.Left == node && left == null && right == null)
       {
         parent.Left = null;
-        DeleteBalance(parent, -1);
+        DeleteBalance(parent);
       }
-      else if(parent != null && parent.Right == node && left == null && right == null) 
+      else if (parent != null && parent.Right == node && left == null && right == null)
       {
         parent.Right = null;
-        DeleteBalance(parent, 1);
+        DeleteBalance(parent);
       }
-      else if(left == null && right != null) 
+      else if (left == null && right != null)
       {
         Replace(node, right);
-        DeleteBalance(node, 0);
+        DeleteBalance(node);
       }
       else if (left != null && right == null)
       {
         Replace(node, left);
-        DeleteBalance(node, 0);
+        DeleteBalance(node);
       }
-      else if(right != null && left != null && right.Left == null)
+      else if (right != null && left != null && right.Left == null)
       {
         right.Parent = parent;
         right.Left = left;
-        right.Balance = node.Balance;
-        
+
         left.Parent = right;
         if (node == _root)
           _root = right;
@@ -442,8 +404,8 @@ namespace AVLTree
           else
             parent.Right = right;
         }
-        
-        DeleteBalance(right, 1);
+
+        DeleteBalance(right);
       }
       else if (right != null && left != null && right.Left != null)
       {
@@ -451,29 +413,28 @@ namespace AVLTree
         Node successorParent = successor.Parent;
         Node successorRight = successor.Right;
 
-        successorParent.Left = successorRight;    
+        successorParent.Left = successorRight;
         if (successorRight != null)
           successorRight.Parent = successorParent;
 
         successor.Parent = parent;
         successor.Left = left;
-        successor.Balance = node.Balance;
         successor.Right = right;
         right.Parent = successor;
-        
+
         if (left != null)
           left.Parent = successor;
-        
+
         if (node == _root)
           _root = successor;
         else
         {
-          if (parent.Left == node)   
-            parent.Left = successor;     
-          else          
+          if (parent.Left == node)
+            parent.Left = successor;
+          else
             parent.Right = successor;
         }
-        DeleteBalance(successorParent, -1);
+        DeleteBalance(successorParent);
       }
     }
 
@@ -490,7 +451,6 @@ namespace AVLTree
       Node left = source.Left;
       Node right = source.Right;
 
-      target.Balance = source.Balance;
       target.Key = source.Key;
       target.Value = source.Value;
       target.Left = left;
@@ -503,17 +463,17 @@ namespace AVLTree
         right.Parent = target;
     }
 
-    private void DeleteBalance(Node node, int balance)
+    private void DeleteBalance(Node node)
     {
-      balance = (node.Balance += balance);
+      int balance = GetBalance(node);
 
       if (balance == 2)
       {
-        if (node.Left.Balance >= 0)
+        if (GetBalance(node.Left) >= 0)
         {
           node = RotateRight(node);
 
-          if (node.Balance == -1)
+          if (GetBalance(node) == -1)
             return;
         }
         else
@@ -521,11 +481,11 @@ namespace AVLTree
       }
       else if (balance == -2)
       {
-        if (node.Right.Balance <= 0)
+        if (GetBalance(node.Right) <= 0)
         {
           node = RotateLeft(node);
 
-          if (node.Balance == 1)
+          if (GetBalance(node) == 1)
             return;
         }
         else
@@ -538,9 +498,9 @@ namespace AVLTree
 
       if (parent != null)
         balance = parent.Left == node ? -1 : 1;
-      
+
       if (parent != null)
-        DeleteBalance(parent, balance);
+        DeleteBalance(parent);
     }
 
 
