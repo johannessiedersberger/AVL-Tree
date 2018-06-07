@@ -99,7 +99,7 @@ namespace Test
     }
 
     [Test]
-    public void RandomAddTest()
+    public void RandomAddRemoveTest()
     {
       MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
 
@@ -120,8 +120,6 @@ namespace Test
         addedValues.Remove(value);
         Assert.That(Math.Log(myAVLTREE.Count() + 1, 2) <= myAVLTREE.Height(), Is.EqualTo(true));
       }
-
-
     }
   }
 }
