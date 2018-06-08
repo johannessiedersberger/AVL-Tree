@@ -35,13 +35,10 @@ namespace AVLTree
         throw new ArgumentNullException(nameof(key));
 
       if (Root == null)
-      {
         Root = new Node { Key = key, Value = value };
-      }
       else
-      {
         AddNode(key, value, Root);
-      }
+
 
       Debug.Assert(ClassInvariantFullfilled());
     }
@@ -55,26 +52,17 @@ namespace AVLTree
       if (compare < 0)
       {
         if (node.Left == null)
-        {
-          node.Left = new Node { Key = key, Value = value, Parent = node };
-        }
-        else
-        {
-          AddNode(key, value, node.Left);
-        }
+          node.Left = new Node { Key = key, Value = value, Parent = node };     
+        else        
+          AddNode(key, value, node.Left);      
       }
       else 
       {
-        if (node.Right == null)
-        {
-          node.Right = new Node { Key = key, Value = value, Parent = node };
-        }
-        else
-        {
-          AddNode(key, value, node.Right);
-        }
+        if (node.Right == null)    
+          node.Right = new Node { Key = key, Value = value, Parent = node };     
+        else    
+          AddNode(key, value, node.Right);     
       }
-
       BalanceAfterInsert(node);
     }
 
@@ -284,6 +272,7 @@ namespace AVLTree
     /// <returns>get the value at the key</returns>
     public Value this[Key key]
     {
+      
       get
       {
         Node node = GetNode(key, Root);
@@ -332,6 +321,8 @@ namespace AVLTree
     /// <param name="key"></param>
     public void Remove(Key key)
     {
+      if (key == null)
+        throw new ArgumentNullException();
       RemoveIter(Root, key);
     }
 
@@ -340,16 +331,16 @@ namespace AVLTree
       if (node == null)
         return;
 
-      int cmpt = key.CompareTo(node.Key);
-      if (cmpt < 0)
+      int compare = key.CompareTo(node.Key);
+      if (compare < 0)
       {
         RemoveIter(node.Left, key);
       }
-      else if (cmpt > 0)
+      else if (compare > 0)
       {
         RemoveIter(node.Right, key);
       }
-      else // cmpt = 0
+      else // compare = 0
       {
         RemoveNode(node);
       }
@@ -361,31 +352,34 @@ namespace AVLTree
       Node left = node.Left;
       Node parent = node.Parent;
 
-      if (Root.Left == null && Root.Right == null)
+      if (NoChild(Root))
       {
         Root = null;
       }
-      else if (parent != null && parent.Left == node && left == null && right == null)
+      else if(HasParent(node) && NoChild(node))
       {
-        parent.Left = null;
-        BalanceAfterDelete(parent);
-      }
-      else if (parent != null && parent.Right == node && left == null && right == null)
-      {
-        parent.Right = null;
-        BalanceAfterDelete(parent);
-      }
-      else if (left == null && right != null)
+        if (parent.Left == node)
+        {
+          parent.Left = null;
+          BalanceAfterDelete(parent);
+        }
+        else if (parent.Right == node)
+        {
+          parent.Right = null;
+          BalanceAfterDelete(parent);
+        }
+      }    
+      else if (OnlyRightChild(node))
       {
         Replace(node, right);
         BalanceAfterDelete(node);
       }
-      else if (left != null && right == null)
+      else if (OnlyLeftChield(node))
       {
         Replace(node, left);
         BalanceAfterDelete(node);
       }
-      else if (right != null && left != null && right.Left == null)
+      else if (TwoChilds(node) && right.Left == null)
       {
         right.Parent = parent;
         right.Left = left;
@@ -403,7 +397,7 @@ namespace AVLTree
 
         BalanceAfterDelete(right);
       }
-      else if (right != null && left != null && right.Left != null)
+      else if (TwoChilds(node) && right.Left != null)
       {
         Node successor = GetLeftMostNode(right);
         Node successorParent = successor.Parent;
@@ -432,6 +426,31 @@ namespace AVLTree
         }
         BalanceAfterDelete(successorParent);
       }
+    }
+
+    private bool NoChild(Node node)
+    {
+      return node.Right == null && node.Left == null;
+    }
+
+    private bool HasParent(Node node)
+    {
+      return node.Parent != null;
+    }
+
+    private bool OnlyRightChild(Node node)
+    {
+      return node.Right != null && node.Left == null;
+    }
+
+    private bool OnlyLeftChield(Node node)
+    {
+      return node.Right == null && node.Left != null;
+    }
+
+    private bool TwoChilds(Node node)
+    {
+      return node.Right != null && node.Left != null;
     }
 
     private static Node GetLeftMostNode(Node node)

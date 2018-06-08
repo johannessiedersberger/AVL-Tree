@@ -107,7 +107,6 @@ namespace Test
       const int NUMBERS_TO_ADD = 200;
 
       MyAVLTREE<int, string> myAVLTREE = new MyAVLTREE<int, string>();
-
       List<int> addedValues = new List<int>();
       Random random = new Random(System.DateTime.Now.Millisecond.GetHashCode());
       for (int i = 0; i < NUMBERS_TO_ADD; i++)
